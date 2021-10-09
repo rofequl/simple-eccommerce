@@ -30,7 +30,7 @@
               ></v-text-field>
             </v-col>
             <v-col>
-              <v-btn elevation="2" color="primary" class="float-right mt-3">
+              <v-btn elevation="2" color="primary" class="float-right mt-3" @click="$refs.child.modal()">
                 New Category
               </v-btn>
             </v-col>
@@ -38,17 +38,28 @@
         </v-card-title>
         <v-data-table
           :headers="headers"
-          :items="desserts"
-          :search="search"
-          :items-per-page="5"
-          class="elevation-1"
-        ></v-data-table>
+          :items="categoryList"
+          :search="search" :loading="loading"
+          loading-text="Loading... Please wait"
+          :items-per-page="5">
+          <!-- eslint-disable-next-line -->
+          <template v-slot:item.icon="{item}">
+            <v-img
+              lazy-src="http://localhost:3000/api/storage/images/category/b83dfee0-5fe5-4c42-a747-e7311c1b1463.jpg"
+              max-width="100"
+              src="http://localhost:3000/api/storage/images/category/b83dfee0-5fe5-4c42-a747-e7311c1b1463.jpg"
+            ></v-img>
+          </template>
+        </v-data-table>
       </v-card>
     </v-col>
+    <AdminCategoryCreateUpdate ref="child"/>
   </v-row>
 </template>
 
 <script>
+import {mapGetters} from "vuex";
+
 export default {
   layout: "admin",
   data: () => ({
@@ -62,19 +73,12 @@ export default {
         disabled: true,
       },
     ],
+    loading: true,
     search: '',
     headers: [
-      {
-        text: 'Dessert (100g serving)',
-        align: 'start',
-        sortable: false,
-        value: 'name',
-      },
-      {text: 'Calories', value: 'calories'},
-      {text: 'Fat (g)', value: 'fat'},
-      {text: 'Carbs (g)', value: 'carbs'},
-      {text: 'Protein (g)', value: 'protein'},
-      {text: 'Iron (%)', value: 'iron'},
+      {text: 'Category Name', value: 'name'},
+      {text: 'Banner', value: 'banner', sortable: false},
+      {text: 'Icon', value: 'icon', sortable: false,},
     ],
     desserts: [
       {
@@ -158,7 +162,16 @@ export default {
         iron: '6%',
       },
     ],
+    dialog: true,
   }),
+  computed: {
+    ...mapGetters({categoryList: "category/categoryList"}),
+  },
+  async mounted() {
+    this.loading = true;
+    if (!this.categoryList.length > 0) await this.$store.dispatch('category/CATEGORY_LIST');
+    this.loading = false;
+  },
 }
 </script>
 

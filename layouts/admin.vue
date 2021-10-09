@@ -21,10 +21,10 @@
           </v-list-item-content>
         </v-list-item>
         <v-list-group no-action prepend-icon="mdi-account-circle">
-          <template v-slot:activator>
+          <template #activator>
             <v-list-item-title>Product</v-list-item-title>
           </template>
-          <v-list-item router to="admin/category">
+          <v-list-item router to="/admin/category">
             <v-list-item-title>Category</v-list-item-title>
           </v-list-item>
           <v-list-item link>
